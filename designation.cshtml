@@ -1,0 +1,180 @@
+﻿
+@{ ViewBag.Title = "designation";
+    Layout = "~/Views/Shared/TSLayout.cshtml"; }
+@model IEnumerable<EmployeeManagement.BusinessObjects.Designation>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+@{ var count = @Model.Count(); }
+<h1></h1>
+
+<style>
+    .tdwidth {
+        width: 50% !important;
+    }
+
+    @@media (max-width:576px) {
+        .mts {
+            margin-top: 0px !important;
+        }
+    }
+
+    .mts {
+        margin-top: 28px;
+    }
+
+    label {
+        color: #212121;
+        font-weight: 600 !important;
+    }
+
+    a {
+        color: #e0ba00;
+    }
+
+    .rules {
+        color: #b56800 !important;
+        font-weight: 700;
+    }
+
+    @@media (min-width:576px) {
+        .modal-dialog1 {
+            max-width: 800px;
+            margin: 1.75rem auto
+        }
+    }
+
+    .modaloverflow {
+        height: 600px;
+        overflow-y: auto;
+    }
+
+    table.dataTable thead > tr > th {
+        color: #fff;
+        background-color: #223035;
+    }
+
+    .table th {
+        padding: 7px !important;
+    }
+
+    .btn1 {
+        padding: 2px 6px;
+    }
+
+    .btnspace {
+        margin-right: 5px;
+    }
+
+
+    .btn-group {
+        box-shadow: none;
+    }
+
+        .btn-group > .btn-group:not(:first-child) > .btn, .btn-group > .btn:not(:first-child) {
+            border-top-left-radius: .25rem;
+            border-bottom-left-radius: .25rem;
+        }
+
+        .btn-group > .btn-group:not(:last-child) > .btn, .btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
+            border-top-right-radius: .25rem;
+            border-bottom-right-radius: .25rem;
+        }
+</style>
+<div class="clearfix"></div>
+
+<div class="content-wrapper">
+    <div class="container-fluid">
+        <!-- Breadcrumb-->
+        <!-- End Breadcrumb-->
+
+        <div class="row pt-4 pb-3">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa fa-table"></i> Designation Master List
+                        <button type="button" class="btn btnspace btn-warning btn-sm float-right">Export </button>
+                        <button type="button" class="btn btnspace btn-primary btn-sm float-right">Import </button>
+                        <button type="button" class="btn btnspace btn-danger btn-sm float-right" onclick="Delete()">Delete </button>
+                        <button type="button" class="btn btnspace btn-success btn-sm float-right" onclick="Create()">Create </button>
+
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div id="default-datatable_wrapper" class="dataTables_wrapper container-fluid dt-bootstrap4">
+                                <table id="default-datatable" class="table table-bordered dataTable" role="grid" aria-describedby="default-datatable_info">
+                                    <thead>
+                                        <tr role="row">
+                                            <th class="sorting_asc" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column descending" style="width: 46px;text-align:center">
+                                                <input type="checkbox" id="checkAll" />
+                                                <label for="checkAll"> </label>
+                                            </th>
+                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" style="width: 91px;">Designation</th>
+                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" style="width: 91px;">Short Name</th>
+                                            <th class="sorting" tabindex="0" aria-controls="default-datatable" rowspan="1" colspan="1" aria-label="Office: activate to sort column ascending" style="width: 30px;">Action</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                            <tr role="row" class="even">
+                                <td align="center">
+                                    <input type="checkbox" id="@item.Id" name="designation" value="@item.Id">
+                                    <label for="@item.Id"> </label><br>
+                                </td>
+                                <td><label> @item.DesignationName</label> </td>
+                                <td><label> @item.Shortname</label> </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="#"><button type="button" onclick="edit(@item.Id)" id="btnedit" class="btn btn-outline-primary waves-effect waves-light m-1 btn1"> <i class="fa fa-edit"></i></button></a>
+                                    </div>
+                                </td>
+                            </tr>
+}
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div><!-- End Row-->
+    </div>
+    <!-- End container-fluid-->
+
+</div><!--End content-wrapper-->
+<script type="text/javascript">
+    function Create() {
+        debugger;
+        location.href = "/Admin/createdesignation";
+    }
+    function Delete() {
+        var ids = '';
+        for (var i = 0; i < $("input[name='designation']:checked").length; i++) {
+            var tempId = ~~$("input[name='designation']:checked")[i].id;
+            ids = ids + "," + tempId;
+        }
+        if (ids !== '' && ids.length > 1) {
+            ids = ids.substring(1, ids.length);
+        }
+        confirm("Are you sure want to delete this record") ? location.href = "/Admin/deletedesignation?ids=" + ids : false;
+    }
+    $(function () {
+        $("#checkAll").bind("change", function () {
+            $("input[name='designation']").prop("checked", $(this).prop("checked"));
+        });
+        $("input[name='designation']").bind("change", function () {
+            if (!$(this).prop("checked"))
+                $("#checkAll").prop("checked", false);
+            if (@count === $("input[name='designation']:checked").length)
+                $("#checkAll").prop("checked", true);
+        });
+    });
+    function edit(id) {
+        location.href = "/Admin/editdesignation?id=" + id;
+    }
+</script>
